@@ -1,36 +1,52 @@
 import requests
 import json
 from anti_useragent import UserAgent
+import time
+
+
 
 
 def start():
-
     headers = {
-        'authority': 'cs.money',
-        'accept': 'application/json, text/plain, */*',
-        'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
-        # 'cookie': 'group_id=f9e995ac-0f31-44ea-a241-c80fecd5adcb; region=Grodnenskaya; cc_service2={%22services%22:[%22necessary%22%2C%22gtm%22%2C%22ym%22%2C%22amplitude%22%2C%22gleam%22%2C%22esputnik%22%2C%22hotjar%22%2C%22userSesDatToAnalytic%22%2C%22userSesDatToMarketing%22%2C%22cardVisualSize%22]%2C%22acceptanceDate%22:1708344776018%2C%22revision%22:0}; _hjSessionUser_2848248=eyJpZCI6IjhlNDBjY2NhLWNmNTgtNTgwMC1iYzg2LTNlYjI0ZDIyOGFmZCIsImNyZWF0ZWQiOjE3MDgzNDQ3NzYzNTksImV4aXN0aW5nIjp0cnVlfQ==; _hjHasCachedUserAttributes=true; _gcl_au=1.1.955044900.1708344776; sc=7BF80433-7EEB-1D61-7E01-1FFD451C2518; _ga=GA1.1.869995080.1708344777; _scid=5c90199b-2bef-4526-b315-08e241307c22; _ym_uid=1708344777789041453; _ym_d=1708344777; _fbp=fb.1.1708344777162.2080337635; _ym_isad=2; ouid=2254924839_1734003192; _sctr=1%7C1708290000000; isAnalyticEventsLimit=true; cf_clearance=eV6ailSGljaK.v9OmdbDJBl208R2Q2W9RAudfvqDqjg-1708347887-1.0-Ac4j2Qto4xGJSJuJKekPOcT+S+2GJQffRx2A5iDGXT8q1S8xQqhATkfW59BnveXbCScHNwhXXEVOLgLD8HRAxIU=; new_language=en; _scid_r=5c90199b-2bef-4526-b315-08e241307c22; _ga_CFRN8YJV66=GS1.1.1708344776.1.1.1708348794.0.0.0; _uetsid=37761750cf2011eebf91d5c28222e44e; _uetvid=37765ae0cf2011eeaa4163b82a292c36; amplitude_id_c14fa5162b6e034d1c3b12854f3a26f5cs.money=eyJkZXZpY2VJZCI6ImFmNDcyMDJkLTBjYmYtNDkzMi04NDRiLWVhNjM2ZjI4M2Y3M1IiLCJ1c2VySWQiOm51bGwsIm9wdE91dCI6ZmFsc2UsInNlc3Npb25JZCI6MTcwODM0Nzg4NzczOCwibGFzdEV2ZW50VGltZSI6MTcwODM0ODgyMzg5MSwiZXZlbnRJZCI6MTUsImlkZW50aWZ5SWQiOjEyLCJzZXF1ZW5jZU51bWJlciI6Mjd9; _ga_HY7CCPCD7H=GS1.1.1708344776.1.1.1708363385.59.0.0',
-        'referer': 'https://cs.money/market/buy/',
-        'sec-ch-ua': '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Windows"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-origin',
-        'traceparent': '00-defb64f2f2668451890e84ce2dbdb249-1ef171e13c3556f6-01',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-        'x-client-app': 'web_mobile',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0',
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
+        # 'Accept-Encoding': 'gzip, deflate, br',
+        'X-Client-App': 'web',
+        'traceparent': '00-2ae53341d261d7c20af6f5f8bb4ea3db-f6bb9dfa64254cf6-01',
+        'Alt-Used': 'cs.money',
+        'Connection': 'keep-alive',
+        'Referer': 'https://cs.money/market/buy/',
+        # 'Cookie': 'region=Grodnenskaya; cc_service2={%22services%22:[%22necessary%22%2C%22gtm%22%2C%22ym%22%2C%22amplitude%22%2C%22gleam%22%2C%22esputnik%22%2C%22hotjar%22%2C%22userSesDatToAnalytic%22%2C%22userSesDatToMarketing%22%2C%22cardVisualSize%22]%2C%22acceptanceDate%22:1708281882726%2C%22revision%22:0}; group_id=97bc3555-3efe-4876-91f9-2018937763a6; sc=5130948A-2EFB-54FC-AF9F-339C47DB13B2; _gcl_au=1.1.42814056.1708281883; _ga_HY7CCPCD7H=GS1.1.1708365886.2.1.1708365918.28.0.0; _ga=GA1.1.894398092.1708281884; cf_clearance=.w_Dxq1JPih7h9ch1Uvmg9ljHlssx9UwpQ6coDScLKo-1708365886-1.0-Af1oq5AREHT5vpNlMF9EZ+FJVLwLbIEugDZO/lwanG17Geinzsi37I+m8bPxryyerlYxQC9AoYL8Harz0o5/wng=; _ga_CFRN8YJV66=GS1.1.1708365886.2.1.1708365896.0.0.0; ouid=60299031_1734003192; _ym_uid=1708281886412497733; _ym_d=1708281886; _scid=eafb7b8f-21ae-4a77-99ec-d91424da7f0a; amplitude_id_c14fa5162b6e034d1c3b12854f3a26f5cs.money=eyJkZXZpY2VJZCI6IjMwYzc3N2U0LTBmZGMtNDVhMi1hYzM5LTQ1ZDhjOTc3MWU5MVIiLCJ1c2VySWQiOm51bGwsIm9wdE91dCI6ZmFsc2UsInNlc3Npb25JZCI6MTcwODM2NTg4Njg5MSwibGFzdEV2ZW50VGltZSI6MTcwODM2NTkwNTA4NSwiZXZlbnRJZCI6MTEsImlkZW50aWZ5SWQiOjIwLCJzZXF1ZW5jZU51bWJlciI6MzF9; _hjSessionUser_2848248=eyJpZCI6IjU1N2EwYmJhLTAzYWItNWJlMy1hNTg2LTNhMTY4NjhiOWZhNyIsImNyZWF0ZWQiOjE3MDgyODE4ODY0ODAsImV4aXN0aW5nIjp0cnVlfQ==; _sctr=1%7C1708203600000; isAnalyticEventsLimit=true; new_language=en; _hjSession_2848248=eyJpZCI6ImU0NDFiMTYyLTBkOTMtNGY1NC1hN2IzLTBkZjE3MzdkMmQ1ZCIsImMiOjE3MDgzNjU4ODcxODcsInMiOjEsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; _hjHasCachedUserAttributes=true; _ym_isad=1; _ym_visorc=b; _scid_r=eafb7b8f-21ae-4a77-99ec-d91424da7f0a; _uetsid=c962ac70ce8d11eeb5d901acd8280a1f; _uetvid=ae42a8205d4f11ee829917d87d31b452',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+        # Requests doesn't support trailers
+        # 'TE': 'trailers',
     }
+    offset = 0
+    batch_size = 60
+    while True:
+        params = {
+            'limit': '60',
+            'offset': '0',
+            'order': 'desc',
+            'sort': 'discount',
+        }
+        hash = []
 
-    params = {
-        'limit': '60',
-        'name': 'mac-10',
-        'order': 'desc',
-        'sort': 'discount',
-    }
+        for off in range(offset,offset+batch_size,60):
+            offset += batch_size
+            params['offset'] = off
+            print(off)
+            response = requests.get('https://cs.money/1.0/market/sell-orders', params=params,headers=headers)
+            items = response.json().get('items')
 
-    response = requests.get('https://cs.money/1.0/market/sell-orders', params=params,headers=headers)
-    print(response,response.json())
+            for item in items:
+                print(item.get('pricing').get('discount'))
+            time.sleep(1)
+
+
 
 
 
