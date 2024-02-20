@@ -4,6 +4,7 @@ from aiogram.types import URLInputFile
 from config import load_config, Config
 import aio_pika
 
+
 async def main():
     config: Config = load_config()
     bot = Bot(token=config.tg_bot.token)
@@ -19,25 +20,22 @@ async def main():
             async for message in queue_iter:
                 async with message.process():
                     d_message = message.body.decode().split('\n\n')
-                    print(d_message)
                     parametrs = {
                         'photo_url': '',
                         'name': '',
                         'price': '',
-                        'url': ''
+                        'price_difference': ''
                     }
                     for i in d_message:
                         i = i.split(': ')
                         print(i)
                         parametrs[i[0]] = i[1] 
 
-                    print(parametrs)
-
                     image_from_url = URLInputFile(url=parametrs['photo_url'])
                      
                     await bot.send_photo(
                         photo=image_from_url,
-                        caption=f'Название: {parametrs["name"]}\nЦена: {parametrs["price"]}$',
+                        caption=f'Название: {parametrs["name"]}\nЦена: {parametrs["price"]}$\nРазница в цене: {parametrs['price_difference']}',
                         chat_id=config.group_id
                     )
 
