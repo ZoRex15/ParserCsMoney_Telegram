@@ -53,7 +53,7 @@ def start(tupl: tuple):
                 if lowest_item[0] <= price:
                     logger.debug(f'Нашли скин с низкой ценой! {name}')
                     RebbitMQ.send_message(
-                        photo_url='https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXH5ApeO4YmlhxYQknCRvCo04DEVlxkKgpot621FBRw7P7NYjV9-N24q4iOluHtfb-Jl2oE6ZYh2r6UptmhjFHirxY9Zjqgd9SdcwU5ZA2EqFW3lO26h5Wi_MOeU-h4Woo',
+                        photo_url=lowest_item[1],
                         name=name,
                         price=lowest_item[0],
                     )
