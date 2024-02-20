@@ -64,7 +64,7 @@ price_differens=round(price-lowest_item[0],2)
                 logger.warning(f'Статус код {response.status_code}')
                 break
         except Exception as ex:
-            time.sleep(1)
+           
             logger.error(f'Ошибка в парсере {ex} Статус код: {response.status_code}')
 
 
