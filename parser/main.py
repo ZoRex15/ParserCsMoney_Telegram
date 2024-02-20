@@ -57,6 +57,7 @@ logger.debug(f'Market: {lowest_item[0], Json: {lowest_item[1]')
                         photo_url=lowest_item[1],
                         name=name,
                         price=lowest_item[0],
+price_differens=round(price-lowest_item[0],2)
                     )
                     break
 
