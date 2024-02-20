@@ -8,7 +8,7 @@ from loguru import logger
 from service.rebbit import RebbitMQ
 
 c = 0
-logger.add('debug.log',format="{time} {level} {message}",level='DEBUG',rotation='10 KB',compression='zip')
+logger.add('debug.log',format="{time} {level} {message}",level='DEBUG',rotation='100 MB',compression='zip')
 
 def start(tupl: tuple):
     name,price = tupl[0],float(tupl[1])
@@ -49,9 +49,10 @@ def start(tupl: tuple):
                 for item in items:
                     hash.append((item.get('pricing').get('computed'),item.get('asset').get("images").get('steam')))
                 lowest_item = min(hash,key=lambda x: x[0])
-                logger.debug(f'Количество запросов {c}')
+                logger.info(f'Количество запросов {c}')
+logger.debug(f'Market: {lowest_item[0], Json: {lowest_item[1]')
                 if lowest_item[0] <= price:
-                    logger.debug(f'Нашли скин с низкой ценой! {name}')
+                    logger.info(f'Нашли скин с низкой ценой! {name}')
                     RebbitMQ.send_message(
                         photo_url=lowest_item[1],
                         name=name,
