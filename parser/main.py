@@ -5,7 +5,7 @@ import time
 import concurrent.futures
 from data import data_,col_potokov
 from loguru import logger
-from service.rebbit import RebbitMQ
+from service import RebbitMQ
 
 c = 0
 logger.add('debug.log',format="{time} {level} {message}",level='DEBUG',rotation='10 KB',compression='zip')
