@@ -28,14 +28,13 @@ async def main():
                     }
                     for i in d_message:
                         i = i.split(': ')
-                        print(i)
                         parametrs[i[0]] = i[1] 
 
                     image_from_url = URLInputFile(url=parametrs['photo_url'])
                      
                     await bot.send_photo(
                         photo=image_from_url,
-                        caption=f'Название: {parametrs["name"]}\nЦена: {parametrs["price"]}$\nРазница в цене: {parametrs['price_difference']}',
+                        caption=f'Название: {parametrs["name"]}\nЦена: {parametrs["price"]}$\nРазница в цене: {parametrs["price_difference"]}',
                         chat_id=config.group_id
                     )
 

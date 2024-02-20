@@ -57,6 +57,7 @@ def start(tupl: tuple):
                         photo_url=lowest_item[1],
                         name=name,
                         price=lowest_item[0],
+                        price_difference=round(price-lowest_item[0],2)
                     )
                     break
 
