@@ -49,8 +49,7 @@ def start(tupl: tuple):
                 for item in items:
                     hash.append((item.get('pricing').get('computed'),item.get('asset').get("images").get('steam')))
                 lowest_item = min(hash,key=lambda x: x[0])
-                logger.info(f'Количество запросов {c}')
-logger.debug(f'Market: {lowest_item[0], Json: {lowest_item[1]')
+                logger.info(f'Количество запросов {c}')  logger.debug(f'Market: {lowest_item[0], Json: {lowest_item[1]')
                 if lowest_item[0] <= price:
                     logger.info(f'Нашли скин с низкой ценой! {name}')
                     RebbitMQ.send_message(
