@@ -5,7 +5,7 @@ import time
 import concurrent.futures
 from data import data_, col_potokov
 from loguru import logger
-#from service import RebbitMQ
+from service import RebbitMQ
 from itertools import cycle
 
 c = 0
@@ -63,11 +63,11 @@ def start(tupl: tuple):
                         lowest_item = min(filterest_item, key=lambda x: x[0])
                         if lowest_item[0] <= price:
                             logger.info(f'''Нашли скин с низкой ценой! {name}. Market price: {lowest_item[0]}, Json price: {price}''')
-                            #RebbitMQ.send_message(
-                                #photo_url=lowest_item[1],
-                                #name=lowest_item[2],
-                                #price=lowest_item[0],
-                                #url=f'https://cs.money/market/buy/?limit=60&search={lowest_item[2]}&order=asc&sort=price')
+                            RebbitMQ.send_message(
+                                photo_url=lowest_item[1],
+                                name=lowest_item[2],
+                                price=lowest_item[0],
+                                url=f'https://cs.money/market/buy/?limit=60&search={lowest_item[2]}&order=asc&sort=price')
                             break
                         else:
                             break
