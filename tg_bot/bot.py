@@ -4,6 +4,8 @@ from aiogram.types import URLInputFile
 from config import load_config, Config
 import aio_pika
 
+from keyboards.inline_keyboards import create_url_button
+
 
 async def main():
     config: Config = load_config()
@@ -24,7 +26,7 @@ async def main():
                         'photo_url': '',
                         'name': '',
                         'price': '',
-                        'price_difference': ''
+                        'url': ''
                     }
                     for i in d_message:
                         i = i.split(': ')
@@ -34,8 +36,9 @@ async def main():
                      
                     await bot.send_photo(
                         photo=image_from_url,
-                        caption=f'Название: {parametrs["name"]}\nЦена: {parametrs["price"]}$\nРазница в цене: {parametrs["price_difference"]}',
-                        chat_id=config.group_id
+                        caption=f'Название: {parametrs["name"]}\nЦена: {parametrs["price"]}$',
+                        chat_id=config.group_id,
+                        reply_markup=create_url_button(url=parametrs['url'])
                     )
 
 if __name__ == '__main__':
