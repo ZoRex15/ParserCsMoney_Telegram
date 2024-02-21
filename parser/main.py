@@ -37,43 +37,33 @@ def start(tupl: tuple):
                 'limit': '60',
                 'name': '',
                 'offset': '0',
-                'order': 'asc',
-                'sort': 'price',
+                'order': 'desc',
+                'sort': 'discount',
             }
             params['name'] = name
             hash = []
-            for i in range(0, 5000, 60):
-                params['offset'] = i
-                logger.debug(f'Делаем запрос с оффсетом {i}')
-                response = requests.get('https://cs.money/1.0/market/sell-orders', params=params,headers=headers)
-                if response.status_code == 200:
-                    c += 1
-                    items = response.json().get('items')
-                    for item in items:
-                        hash.append((item.get('pricing').get('computed'),
-                                     item.get('asset').get("images").get('steam'),
-                                     item.get('asset').get('names').get('full')))
-
-                    filterest_item = list(filter(hash,key=lambda x: x[2] == name))
-                    if len(filterest_item) > 0:
-                        lowest_item = min(filterest_item,key=lambda x: x[0])
-                        logger.info(f'Количество запросов {c}')
-                        logger.debug(f'Market price: {lowest_item[0]}, Json price: {lowest_item[1]}')
-                        if lowest_item[0] <= price:
-                            logger.info(f'Нашли скин с низкой ценой! {name}')
-                            RebbitMQ.send_message(
-                                photo_url=lowest_item[1],
-                                name=lowest_item[2],
-                                price=lowest_item[0],
-                                url=f'https://cs.money/market/buy/?limit=60&search={lowest_item[2]}&order=asc&sort=price')
-                            break
-                    else:
-                        pass
-
-                else:
-                    logger.warning(f'Статус код {response.status_code}')
+            response = requests.get('https://cs.money/1.0/market/sell-orders', params=params,headers=headers)
+            if response.status_code == 200:
+                c += 1
+                items = response.json().get('items')
+                for item in items:
+                    hash.append((item.get('pricing').get('computed'),item.get('asset').get("images").get('steam')))
+                lowest_item = min(hash,key=lambda x: x[0])
+                logger.info(f'Количество запросов {c}')
+                logger.debug(f'Market: {lowest_item[0]}, Json: {lowest_item[1]}')
+                if lowest_item[0] <= price:
+                    logger.info(f'Нашли скин с низкой ценой! {name}')
+                    RebbitMQ.send_message(
+                        photo_url=lowest_item[1],
+                        name=name,
+                        price=lowest_item[0],
+                        price_difference=round(price-lowest_item[0],2)
+                    )
                     break
-            break
+
+            else:
+                logger.warning(f'Статус код {response.status_code}')
+                break
         except Exception as ex:
            
             logger.error(f'Ошибка в парсере {ex} Статус код: {response.status_code}')
