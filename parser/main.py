@@ -58,7 +58,6 @@ def start(tupl: tuple):
                     if len(filterest_item) > 0:
                         lowest_item = min(filterest_item,key=lambda x: x[0])
                         logger.info(f'Количество запросов {c}')
-                        logger.debug(f'Market price: {lowest_item[0]}, Json price: {lowest_item[1]}')
                         if lowest_item[0] <= price:
                             logger.info(f'Нашли скин с низкой ценой! {name}')
                             RebbitMQ.send_message(
@@ -66,6 +65,8 @@ def start(tupl: tuple):
                                 name=lowest_item[2],
                                 price=lowest_item[0],
                                 url=f'https://cs.money/market/buy/?limit=60&search={lowest_item[2]}&order=asc&sort=price')
+                            break
+                        else:
                             break
                     else:
                         pass
