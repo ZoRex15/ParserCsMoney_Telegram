@@ -44,8 +44,8 @@ def start(tupl: tuple):
             hash = []
             for i in range(0, 5000, 60):
                 params['offset'] = i
-                logger.debug(f'Делаем запрос с оффсетом {i}')
                 response = requests.get('https://cs.money/1.0/market/sell-orders', params=params,headers=headers)
+                logger.info(f'Количество запросов {c}')
                 if response.status_code == 200:
                     c += 1
                     items = response.json().get('items')
@@ -57,7 +57,6 @@ def start(tupl: tuple):
                     filterest_item = list(filter(hash,key=lambda x: x[2] == name))
                     if len(filterest_item) > 0:
                         lowest_item = min(filterest_item,key=lambda x: x[0])
-                        logger.info(f'Количество запросов {c}')
                         if lowest_item[0] <= price:
                             logger.info(f'Нашли скин с низкой ценой! {name}')
                             RebbitMQ.send_message(
