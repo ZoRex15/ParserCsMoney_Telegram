@@ -3,15 +3,16 @@ import json
 from anti_useragent import UserAgent
 import time
 import concurrent.futures
-from data import data_,col_potokov
+from data import data_, col_potokov
 from loguru import logger
-from service import RebbitMQ
+#from service import RebbitMQ
+from itertools import cycle
 
 c = 0
-logger.add('debug.log',format="{time} {level} {message}",level='DEBUG',rotation='100 MB',compression='zip')
+logger.add('debug.log', format="{time} {level} {message}", level='DEBUG', rotation='100 MB', compression='zip')
 
 def start(tupl: tuple):
-    name,price = tupl[0],float(tupl[1])
+    name, price = tupl[0], float(tupl[1])
     global c
 
     headers = {
@@ -44,26 +45,29 @@ def start(tupl: tuple):
             hash = []
             for i in range(0, 5000, 60):
                 params['offset'] = i
-                response = requests.get('https://cs.money/1.0/market/sell-orders', params=params,headers=headers)
-                logger.info(f'Количество запросов {c}')
+                #proxi = next(proxy)
+                #proxy_ye = dict(http=f'socks5://{proxi}',
+                #               https=f'socks5://{proxi}')
+                response = requests.get('https://cs.money/1.0/market/sell-orders', params=params, headers=headers)
                 if response.status_code == 200:
                     c += 1
+                    logger.info(f'Количество запросов {c}')
                     items = response.json().get('items')
                     for item in items:
                         hash.append((item.get('pricing').get('computed'),
                                      item.get('asset').get("images").get('steam'),
                                      item.get('asset').get('names').get('full')))
 
-                    filterest_item = list(filter(hash,key=lambda x: x[2] == name))
+                    filterest_item = list(filter(lambda x: x[2] == name,hash))
                     if len(filterest_item) > 0:
-                        lowest_item = min(filterest_item,key=lambda x: x[0])
+                        lowest_item = min(filterest_item, key=lambda x: x[0])
                         if lowest_item[0] <= price:
-                            logger.info(f'Нашли скин с низкой ценой! {name}')
-                            RebbitMQ.send_message(
-                                photo_url=lowest_item[1],
-                                name=lowest_item[2],
-                                price=lowest_item[0],
-                                url=f'https://cs.money/market/buy/?limit=60&search={lowest_item[2]}&order=asc&sort=price')
+                            logger.info(f'''Нашли скин с низкой ценой! {name}. Market price: {lowest_item[0]}, Json price: {price}''')
+                            #RebbitMQ.send_message(
+                                #photo_url=lowest_item[1],
+                                #name=lowest_item[2],
+                                #price=lowest_item[0],
+                                #url=f'https://cs.money/market/buy/?limit=60&search={lowest_item[2]}&order=asc&sort=price')
                             break
                         else:
                             break
@@ -75,27 +79,20 @@ def start(tupl: tuple):
                     break
             break
         except Exception as ex:
-           
+
             logger.error(f'Ошибка в парсере {ex} Статус код: {response.status_code}')
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
     list_ = data_  # сюда вставляешь то что прогоняешь через фор смотри где больше ссылок собрано
     CONNECTIONS = col_potokov  # колличетсво потоков
     out = []
+    #with open('proxy.txt', 'r', encoding='utf-8') as file:
+        #proxyy_ = list(map(lambda x: x.strip(), file.readlines()[2]))
+    #proxy = cycle(proxyy_)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=CONNECTIONS) as executor:
-        future_to_url = {executor.submit(start,tupl): tupl for tupl in list_}
+        future_to_url = {executor.submit(start, tupl): tupl for tupl in list_}
         done, _ = concurrent.futures.wait(future_to_url, return_when=concurrent.futures.ALL_COMPLETED)
         for future in done:
             try:
