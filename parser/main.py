@@ -5,7 +5,7 @@ import time
 import concurrent.futures
 from data import data_, col_potokov
 from loguru import logger
-from service.rebbit import RebbitMQ
+#from service import RebbitMQ
 from itertools import cycle
 #from database.requests import Database
 
