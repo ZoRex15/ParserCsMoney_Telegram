@@ -40,6 +40,7 @@ async def main():
                         chat_id=config.group_id,
                         reply_markup=create_url_button(url=parametrs['url'])
                     )
+                    await asyncio.sleep(2)
 
 if __name__ == '__main__':
     asyncio.run(main())
