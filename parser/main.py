@@ -14,7 +14,7 @@ from database.requests import Database
 logger.add('debug.log', format="{time} {level} {message}", level='DEBUG', rotation='100 MB', compression='zip')
 ua = UserAgent()
 
-def start(min_price: int = 0,max_price: int = 0):
+def start(min_price: int | float = 0,max_price: int | float = 0):
 
     headers = {
         'authority': 'cs.money',
@@ -79,3 +79,8 @@ def start(min_price: int = 0,max_price: int = 0):
             logger.debug(f'Количество скинов которые отправили {col_skinov}')
         except Exception as ex:
             logger.error(f'Ошибка в парсере {ex} Статус код: {response.status_code}')
+
+if __name__ == '__main__':
+    user = Database.get_user_data()
+    start(min_price=user.min_price,
+          max_price=user.max_price)
