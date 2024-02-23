@@ -7,6 +7,8 @@ from keyboards.inline_keyboards import menu, start
 from FSM.states import FSMChoiseFilters
 from database.requests import Database
 
+import os
+
 
 router = Router()
 
@@ -46,11 +48,11 @@ async def set_filters(message: Message, state: FSMContext):
 
 @router.callback_query(F.data == 'start')
 async def start_parser(callback: CallbackQuery, state: FSMContext):
-    
+    os.system('sudo systemctl start Parser')
     await callback.answer(text='Запуск парсера')
 
 @router.callback_query(F.data == 'stop')
 async def stop_parser(callback: CallbackQuery, state: FSMContext):
-    
+    os.system('sudo systemctl stop Parser')
     await callback.answer(text='Остановка парсера')
 
