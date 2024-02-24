@@ -8,4 +8,4 @@ class IsAdmin(BaseFilter):
         self.admin_id = admin_id
 
     async def __call__(self, message: Message) -> Any:
-        return message.from_user.id == self.admin_id
+        return int(message.from_user.id) == int(self.admin_id)
