@@ -26,7 +26,8 @@ async def main():
                         'photo_url': '',
                         'name': '',
                         'price': '',
-                        'url': ''
+                        'url': '',
+                        'proffit': ''
                     }
                     for i in d_message:
                         i = i.split(': ')
@@ -36,7 +37,7 @@ async def main():
                      
                     await bot.send_photo(
                         photo=image_from_url,
-                        caption=f'Название: {parametrs["name"]}\nЦена: {parametrs["price"]}$',
+                        caption=f'Название: {parametrs["name"]}\nЦена: {parametrs["price"]}$\nПрофит: {parametrs["proffit"]}',
                         chat_id=config.group_id,
                         reply_markup=create_url_button(url=parametrs['url'])
                     )

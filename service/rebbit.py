@@ -5,12 +5,12 @@ class RebbitMQ:
     __host = 'localhost'
 
     @staticmethod
-    def create_message(photo_url: str, name: str, price: str, url: str) -> str:
-        message = f'photo_url: {photo_url}\n\nname: {name}\n\nprice: {price}\n\nurl: {url}'
+    def create_message(photo_url: str, name: str, price: str, url: str, proffit) -> str:
+        message = f'photo_url: {photo_url}\n\nname: {name}\n\nprice: {price}\n\nurl: {url}\n\nproffit: {proffit}'
         return message
     
     @classmethod
-    def send_message(cls, photo_url: str, name: str, price: str, url: str) -> None:
+    def send_message(cls, photo_url: str, name: str, price: str, url: str, proffit: str) -> None:
         conn = pika.BlockingConnection(
             pika.ConnectionParameters(
                 host=cls.__host, credentials=pika.PlainCredentials('guest', 'guest')
@@ -25,7 +25,8 @@ class RebbitMQ:
                 photo_url=photo_url,
                 price=price,
                 name=name,
-                url=url
+                url=url,
+                proffit=proffit
             )
         )
         conn.close()
