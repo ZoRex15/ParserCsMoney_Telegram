@@ -1,7 +1,6 @@
 import requests
-
 from anti_useragent import UserAgent
-
+import time
 from parser_settings.data import data_ as info
 from loguru import logger
 from service.rebbit import RebbitMQ
@@ -38,14 +37,15 @@ def start(min_price: int | float = 0,max_price: int | float = 0):
                 pass
             else:
                 if float(price_json) >= float(price):
+                    raznica = ((float(price_json) - float(price)) / float(price_json) * 100)
                     logger.debug(
-                        f'''Нашли скин с низкой ценой! {name}. Market price: {price}, Json price: {price_json}''')
+                        f'''Нашли скин с низкой ценой! {name}. Market price: {price}, Json price: {price_json} Профит: {round(raznica,2)}%''')
                     col_skinov += 1
                     RebbitMQ.send_message(
                         photo_url=img,
                         name=name,
                         price=price,
-                        url=f'https://cs.money/market/buy/?limit=60&search={name}&order=asc&sort=price')
+                        url=f'https://cs.money/market/buy/?limit=60&search={name}&order=asc&sort=price',proffit=f'{round(raznica,2)}%')
 
 
     while True:
@@ -76,8 +76,8 @@ def start(min_price: int | float = 0,max_price: int | float = 0):
                     logger.warning(f'Статус код {response.status_code}')
                     break
             send_messages_p(hash)
-
             logger.debug(f'Количество скинов которые отправили {col_skinov}')
+            time.sleep(300)
         except Exception as ex:
             logger.error(f'Ошибка в парсере {ex} Статус код: {response.status_code}')
 
