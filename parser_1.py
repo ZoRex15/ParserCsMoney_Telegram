@@ -63,15 +63,18 @@ def start(min_price: int | float = 0,max_price: int | float = 0):
 
             for item_ in hash:
                 price,img,name = item_
-                price_json = info.get(name,999_999_999)
-                if float(price_json) >= float(price):
-                    logger.debug(f'''Нашли скин с низкой ценой! {name}. Market price: {price}, Json price: {price_json}''')
-                    col_skinov += 1
-                    RebbitMQ.send_message(
-                        photo_url=img,
-                        name=name,
-                        price=price,
-                        url=f'https://cs.money/market/buy/?limit=60&search={name}&order=asc&sort=price')
+                price_json = info.get(name,None)
+                if price_json is None:
+                    pass
+                else:
+                    if float(price_json) >= float(price):
+                        logger.debug(f'''Нашли скин с низкой ценой! {name}. Market price: {price}, Json price: {price_json}''')
+                        col_skinov += 1
+                        RebbitMQ.send_message(
+                            photo_url=img,
+                            name=name,
+                            price=price,
+                            url=f'https://cs.money/market/buy/?limit=60&search={name}&order=asc&sort=price')
             logger.debug(f'Количество скинов которые отправили {col_skinov}')
         except Exception as ex:
             logger.error(f'Ошибка в парсере {ex} Статус код: {response.status_code}')
