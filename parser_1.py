@@ -1,21 +1,17 @@
 import requests
-import json
+
 from anti_useragent import UserAgent
-import time
-import concurrent.futures
-from data import data_ as info, col_potokov
+
+from parser_settings.data import data_ as info
 from loguru import logger
 from service.rebbit import RebbitMQ
-from itertools import cycle
 from database.requests import Database
-
 
 
 logger.add('debug.log', format="{time} {level} {message}", level='DEBUG', rotation='100 MB', compression='zip')
 ua = UserAgent()
 
 def start(min_price: int | float = 0,max_price: int | float = 0):
-
     headers = {
         'authority': 'cs.money',
         'accept': 'application/json, text/plain, */*',

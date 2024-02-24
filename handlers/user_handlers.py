@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from keyboards.inline_keyboards import menu, start
 from FSM.states import FSMChoiseFilters
-from parser.database.requests import Database
+from database.requests import Database
 
 import os
 
