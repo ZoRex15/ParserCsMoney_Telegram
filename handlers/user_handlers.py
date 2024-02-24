@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 from keyboards.inline_keyboards import menu, start
 from FSM.states import FSMChoiseFilters
 from database.requests import Database
+from service.rebbit import RebbitMQ
 
 import os
 
@@ -54,5 +55,6 @@ async def start_parser(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == 'stop')
 async def stop_parser(callback: CallbackQuery, state: FSMContext):
     os.system('sudo systemctl stop Parser')
+    RebbitMQ.clear_queue()
     await callback.answer(text='Остановка парсера')
 

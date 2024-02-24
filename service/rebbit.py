@@ -30,3 +30,15 @@ class RebbitMQ:
         )
         conn.close()
 
+    @classmethod
+    def clear_queue(cls):
+        conn = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=cls.__host,
+                credentials=pika.PlainCredentials('guest', 'guest')
+            )
+        )
+        channel = conn.channel()
+        channel.queue_purge('spam')
+        conn.close()
+
