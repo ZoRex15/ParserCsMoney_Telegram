@@ -31,8 +31,8 @@ def start(min_price: int | float = 0,max_price: int | float = 0):
     def send_messages_p(dct: dict):
         nonlocal col_skinov
         for item_ in hash.items():
-            price, img= item_[0].split('З')
-            name = item_[1]
+            name, img= item_[0].split('З')
+            price = min(item_[1])
             price_json = info.get(name, None)
             if price_json is None:
                 pass
