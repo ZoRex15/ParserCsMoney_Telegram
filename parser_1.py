@@ -39,13 +39,13 @@ def start(min_price: int | float = 0,max_price: int | float = 0):
                 if float(price_json) >= float(price):
                     raznica = ((float(price_json) - float(price)) / float(price_json) * 100)
                     logger.debug(
-                        f'''Нашли скин с низкой ценой! {name}. Market price: {price}, Json price: {price_json} Профит: {raznica}%''')
+                        f'''Нашли скин с низкой ценой! {name}. Market price: {price}, Json price: {price_json} Профит: {round(raznica,2)}%''')
                     col_skinov += 1
                     RebbitMQ.send_message(
                         photo_url=img,
                         name=name,
                         price=price,
-                        url=f'https://cs.money/market/buy/?limit=60&search={name}&order=asc&sort=price',proffit=f'{raznica}%')
+                        url=f'https://cs.money/market/buy/?limit=60&search={name}&order=asc&sort=price',proffit=f'{round(raznica,2)}%')
 
 
     while True:
