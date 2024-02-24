@@ -6,7 +6,7 @@ from config import Config, load_config
 
 
 class Database:
-    __engine = create_engine(url='sqlite:///database/database.db', echo=True)
+    __engine = create_engine(url='sqlite:///parser/database/database.db', echo=True)
     __session = sessionmaker(__engine)
     __config: Config = load_config()
 

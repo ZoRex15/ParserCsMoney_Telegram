@@ -4,7 +4,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.fsm.storage.redis import Redis, RedisStorage
 from config import load_config, Config
 from handlers import user_handlers
-from database.requests import Database
+from parser.database.requests import Database
 
 
 async def main():
