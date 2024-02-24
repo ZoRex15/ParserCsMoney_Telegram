@@ -65,7 +65,7 @@ def start(min_price: int | float = 0,max_price: int | float = 0):
                 price,img,name = item_
                 price_json = info.get(name,999_999_999)
                 if float(price_json) <= float(price):
-                    logger.debug(f'''Нашли скин с низкой ценой! {name}. Market price: {price_json}, Json price: {price}''')
+                    logger.debug(f'''Нашли скин с низкой ценой! {name}. Market price: {price}, Json price: {price_json}''')
                     col_skinov += 1
                     RebbitMQ.send_message(
                         photo_url=img,
