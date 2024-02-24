@@ -7,10 +7,13 @@ from keyboards.inline_keyboards import menu, start
 from FSM.states import FSMChoiseFilters
 from database.requests import Database
 from service.rebbit import RebbitMQ
+from filters.filters import IsAdmin
+from config import load_config, Config
 
 import os
 
 
+config: Config = load_config() 
 router = Router()
 
 @router.message(CommandStart())
@@ -47,12 +50,12 @@ async def set_filters(message: Message, state: FSMContext):
     await state.clear()
     await message.answer(text='Меню', reply_markup=menu)
 
-@router.callback_query(F.data == 'start')
+@router.callback_query(F.data == 'start', IsAdmin(config.tg_bot.admin_id))
 async def start_parser(callback: CallbackQuery, state: FSMContext):
     os.system('sudo systemctl start Parser')
     await callback.answer(text='Запуск парсера')
 
-@router.callback_query(F.data == 'stop')
+@router.callback_query(F.data == 'stop', IsAdmin(config.tg_bot.admin_id))
 async def stop_parser(callback: CallbackQuery, state: FSMContext):
     os.system('sudo systemctl stop Parser')
     RebbitMQ.clear_queue()
