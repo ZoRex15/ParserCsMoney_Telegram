@@ -77,7 +77,7 @@ def start(min_price: int | float = 0,max_price: int | float = 0):
                     break
             send_messages_p(hash)
             logger.debug(f'Количество скинов которые отправили {col_skinov}')
-            time.sleep(120)
+            time.sleep(300)
         except Exception as ex:
             logger.error(f'Ошибка в парсере {ex} Статус код: {response.status_code}')
 
