@@ -28,6 +28,26 @@ def start(min_price: int | float = 0,max_price: int | float = 0):
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
         'x-client-app': 'web_mobile',
     }
+    def send_messages_p(dct: dict):
+        nonlocal col_skinov
+        for item_ in hash.items():
+            name, img= item_[0].split('З')
+            price = min(item_[1])
+            price_json = info.get(name, None)
+            if price_json is None:
+                pass
+            else:
+                if float(price_json) >= float(price):
+                    logger.debug(
+                        f'''Нашли скин с низкой ценой! {name}. Market price: {price}, Json price: {price_json}''')
+                    col_skinov += 1
+                    RebbitMQ.send_message(
+                        photo_url=img,
+                        name=name,
+                        price=price,
+                        url=f'https://cs.money/market/buy/?limit=60&search={name}&order=asc&sort=price')
+
+
     while True:
         try:
             c = 0
@@ -41,37 +61,22 @@ def start(min_price: int | float = 0,max_price: int | float = 0):
             }
             params['maxPrice'] = max_price
             params['minPrice'] = min_price
-            hash = []
+            hash = {}
             for i in range(0, 5000, 60):
                 params['offset'] = i
                 headers['user-agent'] = ua.random
-                #proxi = next(proxy)
-                #proxy_ye = dict(http=f'socks5://{proxi}',
-                #               https=f'socks5://{proxi}')
                 response = requests.get('https://cs.money/1.0/market/sell-orders', params=params,headers=headers)
                 if response.status_code == 200:
                     c += 1
                     logger.info(f'Количество запросов {c}')
                     items = response.json().get('items')
                     for item in items:
-                        hash.append((item.get('pricing').get('computed'),
-                                     item.get('asset').get("images").get('steam'),
-                                     item.get('asset').get('names').get('full')))
+                        hash.setdefault(f"{item.get('asset').get('names').get('full')}З{item.get('asset').get('images').get('steam')}",[]).append(item.get('pricing').get('computed'))
                 else:
                     logger.warning(f'Статус код {response.status_code}')
                     break
+            send_messages_p(hash)
 
-            for item_ in hash:
-                price,img,name = item_
-
-                price_json = info.get(name,999_999_999)
-                if float(price) <= float(price_json):
-                    col_skinov += 1
-                    RebbitMQ.send_message(
-                        photo_url=img,
-                        name=name,
-                        price=price,
-                        url=f'https://cs.money/market/buy/?limit=60&search={name}&order=asc&sort=price')
             logger.debug(f'Количество скинов которые отправили {col_skinov}')
         except Exception as ex:
             logger.error(f'Ошибка в парсере {ex} Статус код: {response.status_code}')
