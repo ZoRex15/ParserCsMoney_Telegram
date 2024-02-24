@@ -50,12 +50,12 @@ async def set_filters(message: Message, state: FSMContext):
     await state.clear()
     await message.answer(text='Меню', reply_markup=menu)
 
-@router.callback_query(F.data == 'start', IsAdmin(config.tg_bot.admin_id))
+@router.callback_query(F.data == 'start', IsAdmin(config.tg_bot.admin_ids))
 async def start_parser(callback: CallbackQuery, state: FSMContext):
     os.system('sudo systemctl start Parser')
     await callback.answer(text='Запуск парсера')
 
-@router.callback_query(F.data == 'stop', IsAdmin(config.tg_bot.admin_id))
+@router.callback_query(F.data == 'stop', IsAdmin(config.tg_bot.admin_ids))
 async def stop_parser(callback: CallbackQuery, state: FSMContext):
     os.system('sudo systemctl stop Parser')
     RebbitMQ.clear_queue()

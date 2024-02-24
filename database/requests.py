@@ -40,6 +40,6 @@ class Database:
     @classmethod
     def get_user_data(cls) -> User:
         with cls.__session() as session:
-            user = session.get(User, cls.__config.tg_bot.admin_id)
+            user = session.get(User, cls.__config.tg_bot.admin_ids[0])
             return user
 
