@@ -37,7 +37,7 @@ def start(min_price: int | float = 0,max_price: int | float = 0):
                 pass
             else:
                 if float(price_json) >= float(price):
-                    raznica = ((price_json - price) / price_json * 100)
+                    raznica = ((float(price_json) - float(price)) / float(price_json) * 100)
                     logger.debug(
                         f'''Нашли скин с низкой ценой! {name}. Market price: {price}, Json price: {price_json} Профит: {raznica}%''')
                     col_skinov += 1
